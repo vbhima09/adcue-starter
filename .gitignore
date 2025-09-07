@@ -12,6 +12,5 @@ dist/
 data/raw_videos/**
 data/audio/**
 data/frames/**
-.streamlit/
 ffmpeg.exe
 ffmpeg.exe 
