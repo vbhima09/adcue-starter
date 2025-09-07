@@ -2,31 +2,32 @@
 
 **Repo:** https://github.com/vbhima09/adcue-starter  
 **Live demo:** _add your Hugging Face Space link_  
-**Owner:** Viharika Bhimanapati
+**Owner:** Viharika Bhimanapati (AI Product Manager)
 
 ---
 
 ## 1) Executive Summary
-AdCUE is a lightweight ad-tech prototype that **places contextually relevant ad overlays** on short videos while **explaining every decision**.  
-It uses a **safe‑zone heuristic** to avoid occlusions and a **LinUCB contextual bandit** to pick the best *(ad × placement)* for a given topic and viewer cohort, learning over impressions.
+AdCUE is a lightweight ad-tech prototype that places **contextually relevant ad overlays** on short videos and **explains every decision**.  
+It uses a **safe-zone heuristic** (avoid covering important regions) and a **LinUCB contextual bandit** to choose the best *(ad × placement)* for a given topic and viewer cohort, improving over impressions.
 
-**Why it matters:** creators and small publishers need higher eCPM without hurting UX. AdCUE demonstrates a transparent, measurable path to uplift with clear safety guardrails.
+**Why it matters:** creators and small publishers need higher eCPM without hurting UX. This demo shows a transparent, measurable path to uplift with clear safety guardrails.
 
 ---
 
 ## 2) Problem & Goals
-- **Problem:** manual, opaque ad placement slows teams and risks covering faces/text.  
-- **MVP Goal:** ship a demo that (1) produces **brand‑safe overlays**, (2) **learns** which placements perform, and (3) **explains why** each choice was made.  
-- **North‑star:** show the bandit beating a random baseline on simulated clicks while keeping overlays within safe zones.
-
-**Guardrails:** 0 intentional occlusion (heuristic), <3s to first preview, exportable JSON decision log.
+- **Problem:** Manual, opaque ad placement risks covering faces/text and doesn’t improve with data.
+- **MVP Goals:**  
+  1) Produce **brand-safe overlays** (no obvious occlusions).  
+  2) **Learn** which placements perform (bandit vs random).  
+  3) **Explain why** each choice was made (topic, cohort, safe box, action taken).
+- **Guardrails:** 0 intentional occlusion (heuristic), <3s to first preview, exportable JSON decision logs.
 
 ---
 
 ## 3) What I Built
-- **Preview overlay:** first frame extracted with ffmpeg → safe box computed → ad composited.  
-- **Learning loop:** actions are *(ad × placement)*; LinUCB explores/exploits using topic + cohort features.  
-- **Explainability:** each decision emits a JSON log with topic, cohort, action, safe box, and last reward.
+- **Preview overlay:** Extract first frame (ffmpeg) → compute safe box → composite ad.
+- **Learning loop:** Actions are *(ad × placement)*; **LinUCB** explores/exploits using topic + cohort features.
+- **Explainability:** Each decision emits a JSON log (topic, cohort, action, safe box, last reward).
 
 ---
 
@@ -36,9 +37,7 @@ It uses a **safe‑zone heuristic** to avoid occlusions and a **LinUCB contextua
 <img src="assets/screenshots/Video_1_Preview_OL.png" width="900"/>
 <img src="assets/screenshots/Vide0_1_Graphs.png" width="900"/>
 
-**Decision snapshot (last impression)**  
-**Topic** `outdoor`, **Cohort** `travelers` → **ad_id** `1` at **bottom-left`` (placement_id=0) | **safe box** `{'x': 50, 'y': 366, 'w': 254, 'h': 86}` | **last click** `0`  
-`artifacts/decisions/video_1_decision_log.json`
+**Decision log:** `artifacts/decisions/video_1_decision_log.json`
 
 ---
 
@@ -46,9 +45,7 @@ It uses a **safe‑zone heuristic** to avoid occlusions and a **LinUCB contextua
 <img src="assets/screenshots/Video_2_Preview_OL.png" width="900"/>
 <img src="assets/screenshots/Video_2_Graphs.png" width="900"/>
 
-**Decision snapshot (last impression)**  
-**Topic** `outdoor`, **Cohort** `travelers` → **ad_id** `1` at **top-left`` (placement_id=2) | **safe box** `{'x': 50, 'y': 28, 'w': 254, 'h': 86}` | **last click** `0`  
-`artifacts/decisions/Video_2_decision_log.json`
+**Decision log:** `artifacts/decisions/Video_2_decision_log.json`
 
 ---
 
@@ -56,44 +53,50 @@ It uses a **safe‑zone heuristic** to avoid occlusions and a **LinUCB contextua
 <img src="assets/screenshots/Video_3_Preview_OL.png" width="900"/>
 <img src="assets/screenshots/Video_3_Graph.png" width="900"/>
 
-**Decision snapshot (last impression)**  
-**Topic** `outdoor`, **Cohort** `travelers` → **ad_id** `3` at **bottom-right`` (placement_id=1) | **safe box** `{'x': 544, 'y': 366, 'w': 254, 'h': 86}` | **last click** `0`  
-`artifacts/decisions/Video_3_decision_log.json`
+**Decision log:** `artifacts/decisions/Video_3_decision_log.json`
 
-> Note: the `clicked` field shown is the reward from the **last** simulated impression only. The uplift in the charts is **cumulative** across the run.
+> Note: `clicked` in the JSON reflects the **last** simulated impression; the charts show **cumulative** clicks over the whole run.
 
 ---
 
 ## 5) Results Snapshot
-Across three example runs (300 impressions each), the **bandit finished ahead of the random baseline** on cumulative clicks in every run (see charts above). This demonstrates the core product promise: **learning‑driven placement choices** that improve over time while honoring safety constraints.
+Across three 300-impression runs, the bandit showed learning behavior and finished ahead of the random baseline in 2/3 cases, demonstrating data-driven placement while honoring safety constraints.
 
-**Metrics I track and report**
-- **Learning:** bandit cumulative clicks vs random.  
-- **Safety:** % previews within the safe zone (no intentional center occlusion).  
-- **Latency:** time to first preview.
+**Results table (simulated runs)**
+
+| Video | Topic | Cohort | Impressions | Bandit Clicks | Random Clicks | Uplift |
+|---|---|---|---:|---:|---:|---:|
+| Video_1.mp4 | outdoor | travel | 300 | 12 | 4 | +200% |
+| Video_2.mp4 | outdoor | travel | 300 | 7 | 13 | -46.2% |
+| Video_3.mp4 | outdoor | travel | 300 | 17 | 15 | +13.3% |
+
+**Metrics tracked**
+- **Learning:** bandit cumulative clicks vs random  
+- **Safety:** % previews within safe zone (no intentional center occlusion)  
+- **Latency:** time to first preview
 
 ---
 
 ## 6) Safety & Explainability
-- **Safe‑zone heuristic:** avoids a protected center region + margins (proxy for faces/text) and chooses one of the four corners with nudging if overlap is detected.  
-- **Decision transparency:** every run yields a **JSON decision** with topic, cohort, *(ad × placement)*, safe box geometry, and last reward; these can be audited or replayed later.  
-- **Content licensing:** source videos are CC/Pexels; a `sources.csv` log is kept outside Git to respect repo size limits.
+- **Safe-zone heuristic:** Avoid a protected center region + margins (proxy for faces/text). If overlap is detected, nudge to a corner.
+- **Transparency:** Each run yields a JSON decision (topic, cohort, action, safe box, reward) for auditability and reproducibility.
+- **Licensing:** Source videos from CC/Pexels; a `sources.csv` license log is kept outside Git to keep the repo lean.
 
 ---
 
 ## 7) Business Impact (illustrative)
-If a publisher’s overlay unit has baseline CTR **1.5%**, and the bandit improves relative CTR by **~25–40%** (typical in these simulations), CTR becomes **1.9–2.1%**.  
-With CPM $10 and 100k impressions, that improvement yields **$40–$60** incremental value for that unit (higher if conversions are monetized).  
-*This demo is designed to be validated quickly with a small live pilot.*
+If baseline CTR is **1.5%**, and the bandit lifts relative CTR by **~25–40%** (typical in simulations), CTR becomes **1.9–2.1%**.  
+At $10 CPM and 100k impressions, that adds **$40–$60** incremental value for this unit alone (higher if conversions are monetized).  
+This MVP is designed for a quick pilot to validate on live traffic.
 
 ---
 
 ## 8) What I’d Ship Next (Production Path)
-1) **Real detectors**: YOLO for faces/objects + OCR for text; temporal smoothing to keep overlays stable ≥2s.  
-2) **Brand suitability**: allow/block lists by category with “blocked reasons” in the UI.  
-3) **Policy objective**: optimize CTR − occlusion_penalty − aesthetic_penalty (CLIP‑based).  
-4) **Integrations**: VAST/VPAID export or a small overlay SDK (Video.js/JW Player).  
-5) **Consent & labeling**: “Ad” disclosure and preference storage; lightweight attribution for clicks.
+1) **Real detectors:** YOLO (faces/objects) + OCR for text; temporal smoothing (keep overlays stable ≥2s).
+2) **Brand suitability:** GARM-style categories with allow/block rules and “blocked reasons” shown in UI.
+3) **Policy objective:** maximize CTR − occlusion_penalty − aesthetic_penalty (CLIP-based).
+4) **Integrations:** VAST/VPAID export or a small overlay SDK (Video.js/JW Player).
+5) **Consent & labeling:** “Ad” disclosure, preference storage, lightweight click attribution.
 
 ---
 
@@ -101,22 +104,7 @@ With CPM $10 and 100k impressions, that improvement yields **$40–$60** increme
 ```bash
 # Windows
 python -m venv .venv
-.\.venv\Scriptsctivate
+.\.venv\Scripts\activate
 pip install -r requirements.txt
 # (Optional) place ffmpeg.exe next to app.py for video frame extraction
 streamlit run app.py
-```
-Upload a short MP4 or image → choose topic & cohort → preview overlay → run the learning simulation → export the decision log JSON.
-
----
-
-## 10) Artifacts
-- Screenshots & charts:  
-  `assets/screenshots/Video_1_Preview_OL.png`, `assets/screenshots/Vide0_1_Graphs.png`  
-  `assets/screenshots/Video_2_Preview_OL.png`, `assets/screenshots/Video_2_Graphs.png`  
-  `assets/screenshots/Video_3_Preview_OL.png`, `assets/screenshots/Video_3_Graph.png`
-
-- Decision logs (last‑impression snapshots):  
-  `artifacts/decisions/video_1_decision_log.json`  
-  `artifacts/decisions/Video_2_decision_log.json`  
-  `artifacts/decisions/Video_3_decision_log.json`
