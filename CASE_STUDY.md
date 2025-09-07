@@ -1,8 +1,8 @@
 # AdCUE — Explainable, Scene-Aware Ad Overlays (Solo AI PM Case Study)
 
 **Repo:** https://github.com/vbhima09/adcue-starter  
-**Live demo:** _add your Hugging Face Space link_  
-**Owner:** Viharika Bhimanapati (AI Product Manager)
+**Live demo:** https://huggingface.co/spaces/Viharika09/adcue-starter 
+**Owner:** Viharika Bhimanapati
 
 ---
 
