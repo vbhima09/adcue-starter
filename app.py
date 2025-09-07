@@ -8,17 +8,13 @@ import numpy as np
 from PIL import Image, ImageOps
 # --- bootstrap for Hugging Face Spaces ---
 import os, pathlib
-# Give Streamlit a writable HOME (Spaces allows /home/user and /tmp)
-os.environ.setdefault("HOME", "/home/user")
-os.environ.setdefault("XDG_CACHE_HOME", "/tmp")
-# Point Streamlit to the repo config file (so it doesn’t look in ~/.streamlit at /)
+# --- bootstrap for Hugging Face Spaces ---
+import os, pathlib
+os.environ.setdefault("HOME", "/home/user")     # ensure Streamlit writes under a writable HOME
+os.environ.setdefault("XDG_CACHE_HOME", "/tmp") # keep caches writable
 os.environ.setdefault("STREAMLIT_CONFIG_FILE", str(pathlib.Path(__file__).parent / ".streamlit" / "config.toml"))
-# Turn off usage stats programmatically (belt & suspenders)
 os.environ.setdefault("STREAMLIT_BROWSER_GATHER_USAGE_STATS", "false")
 # -----------------------------------------
-
-import streamlit as st
-
 import streamlit as st
 import plotly.graph_objects as go
 
