@@ -1,0 +1,15 @@
+{
+  "content_name": "Video_2.mp4",
+  "topic": "outdoor",
+  "cohort": "travelers",
+  "ad_id": 1,
+  "placement_id": 2,
+  "reason": "Topic=outdoor, Cohort=travelers, prior bandit reward~0.037",
+  "safe_zone": {
+    "x": 50,
+    "y": 28,
+    "w": 254,
+    "h": 86
+  },
+  "clicked": 0
+}
