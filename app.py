@@ -6,6 +6,18 @@ from datetime import datetime
 
 import numpy as np
 from PIL import Image, ImageOps
+# --- bootstrap for Hugging Face Spaces ---
+import os, pathlib
+# Give Streamlit a writable HOME (Spaces allows /home/user and /tmp)
+os.environ.setdefault("HOME", "/home/user")
+os.environ.setdefault("XDG_CACHE_HOME", "/tmp")
+# Point Streamlit to the repo config file (so it doesn’t look in ~/.streamlit at /)
+os.environ.setdefault("STREAMLIT_CONFIG_FILE", str(pathlib.Path(__file__).parent / ".streamlit" / "config.toml"))
+# Turn off usage stats programmatically (belt & suspenders)
+os.environ.setdefault("STREAMLIT_BROWSER_GATHER_USAGE_STATS", "false")
+# -----------------------------------------
+
+import streamlit as st
 
 import streamlit as st
 import plotly.graph_objects as go
